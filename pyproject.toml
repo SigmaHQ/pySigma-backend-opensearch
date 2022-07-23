@@ -18,6 +18,8 @@ pysigma = "^0.6.8"
 pysigma-pipeline-sysmon = {git = "https://github.com/SigmaHQ/pySigma-pipeline-sysmon.git", rev = "main"}
 pytest = "^7.1.2"
 autopep8 = "^1.6.0"
+pytest-cov = "^3.0.0"
+coverage = "^6.4.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
