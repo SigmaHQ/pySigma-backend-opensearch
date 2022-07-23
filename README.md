@@ -1,5 +1,6 @@
 ![Tests](https://github.com/SigmaHQ/pySigma-backend-opensearch/actions/workflows/test.yml/badge.svg)
-![Coverage Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/SigmaHQ/GitHub Gist identifier containing coverage badge JSON expected by shields.io./raw/SigmaHQ-pySigma-backend-opensearch.json)
+![Coverage
+Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/andurin/e95ff0904786bd5883f19105b6a3a1ee/raw/SigmaHQ-pySigma-backend-opensearch.json)
 ![Status](https://img.shields.io/badge/Status-pre--release-orange)
 
 # pySigma Opensearch Lucene Backend
