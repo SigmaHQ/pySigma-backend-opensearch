@@ -17,10 +17,6 @@ class OpensearchLuceneBackend(LuceneBackend):
         self.monitor_interval = monitor_interval or 5
         self.monitor_interval_unit = monitor_interval_unit or "MINUTES"
 
-    # Values
-    # string quoting character (added as escaping character)
-    str_quote: ClassVar[str] = ''
-
     def finalize_query_monitor_rule(self, rule: SigmaRule, query: str, index: int, state: ConversionState) -> str:
         # TODO: implement the per-query output for the output format lql here. Usually, the generated query is
         # embedded into a template, e.g. a JSON format with additional information from the Sigma rule.

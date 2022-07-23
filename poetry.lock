@@ -126,7 +126,7 @@ pysigma = "^0.6.2"
 type = "git"
 url = "https://github.com/SigmaHQ/pySigma-backend-elasticsearch.git"
 reference = "main"
-resolved_reference = "da73eb3e12cd1d0b45d27f02798d4fa33b3a9e6a"
+resolved_reference = "6d9b1313480da824a54766cb89cdce1f4abd8dc7"
 
 [[package]]
 name = "pysigma-pipeline-sysmon"
