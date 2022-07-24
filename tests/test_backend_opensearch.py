@@ -160,6 +160,82 @@ def test_os_qs_listmapmix_all(es_qs_backend : OpensearchLuceneBackend):
         """)
     ) == ['(fieldA:valueA OR fieldB:valueB) AND fieldC:valueC']
 
+def test_os_monitor_and_expression(es_qs_backend : OpensearchLuceneBackend):
+    rule = SigmaCollection.from_yaml("""
+        title: Test
+        status: test
+        tags:
+            - ns.tag1
+            - ns.tag2
+        references:
+            - https://reference.org
+        level: high
+        logsource:
+            category: test_category
+            product: test_product
+        detection:
+            sel:
+                fieldA: valueA
+                fieldB: valueB
+            condition: sel
+    """)
+    result = {
+        "type": "monitor",
+        "name": "SIGMA - {}".format(rule.rules[0].title),
+        "description": rule.rules[0].description,
+        "enabled": True,
+        "schedule": {
+            "period": {
+                "interval": 5,
+                "unit": "MINUTES"
+            }
+        },
+        "inputs": [
+            {
+                "search": {
+                    "indices": ["beats-*"],
+                    "query": {
+                        "size": 1,
+                        "query": {
+                            "bool": {
+                                "must": [
+                                    {
+                                        "query_string": {
+                                            "query": "fieldA:valueA AND fieldB:valueB",
+                                            "analyze_wildcard": True
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        ],
+        "tags": ["{}-{}".format(n.namespace, n.name) for n in rule.rules[0].tags],
+        "triggers": [
+            {
+                "name": "generated-trigger",
+                "severity": 2,
+                "condition": {
+                    "script": {
+                        "source": "ctx.results[0].hits.total.value > 0",
+                        "lang": "painless"
+                    }
+                },
+                "actions": []
+            }
+        ],
+        "sigma_meta_data": {
+            "rule_id": str(rule.rules[0].id),
+            "threat": []
+        },
+        "references": rule.rules[0].references
+    }
+    assert es_qs_backend.convert(
+        rule, output_format='monitor_rule'
+    ) == [result]
+
 def test_elasticsearch_dql_output(es_qs_backend : OpensearchLuceneBackend):
     """Test for output format dql."""
     # TODO: implement a test for the output format

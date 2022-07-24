@@ -64,7 +64,7 @@ class OpensearchLuceneBackend(LuceneBackend):
             "triggers": [
                 {
                     "name": "generated-trigger",
-                    "severity": severity_mapping[rule.level.value],
+                    "severity": severity_mapping[rule.level.value] or 1,
                     "condition": {
                         "script": {
                             "source": "ctx.results[0].hits.total.value > 0",
@@ -87,4 +87,4 @@ class OpensearchLuceneBackend(LuceneBackend):
         # TODO: implement the output finalization for all generated queries for the format lql here. Usually,
         # the single generated queries are embedded into a structure, e.g. some JSON or XML that can be imported into
         # the SIEM.
-        return queries
+        return list(queries)
