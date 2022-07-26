@@ -12,7 +12,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.8"
 pysigma-backend-elasticsearch = {git = "https://github.com/SigmaHQ/pySigma-backend-elasticsearch.git", rev = "main"}
-pysigma = "^0.6.8"
+pysigma = "^0.7.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
