@@ -15,7 +15,6 @@ pysigma-backend-elasticsearch = {git = "https://github.com/SigmaHQ/pySigma-backe
 pysigma = "^0.6.8"
 
 [tool.poetry.dev-dependencies]
-pysigma-pipeline-sysmon = {git = "https://github.com/SigmaHQ/pySigma-pipeline-sysmon.git", rev = "main"}
 pytest = "^7.1.2"
 autopep8 = "^1.6.0"
 pytest-cov = "^3.0.0"
