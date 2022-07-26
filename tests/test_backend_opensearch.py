@@ -125,7 +125,7 @@ def test_os_qs_cidr_query(es_qs_backend : OpensearchLuceneBackend):
                     field|cidr: 192.168.0.0/16
                 condition: sel
         """)
-    ) == ['field:192.168.0.0/16']
+    ) == ['field:192.168.0.0\\/16']
 
 def test_os_qs_field_name_with_whitespace(es_qs_backend : OpensearchLuceneBackend):
     assert es_qs_backend.convert(
