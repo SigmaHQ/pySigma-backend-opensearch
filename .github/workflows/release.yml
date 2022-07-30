@@ -10,6 +10,7 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-20.04
     steps:
+      - uses: ankane/setup-opensearch@v1
       - uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v2
