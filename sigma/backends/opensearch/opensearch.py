@@ -8,10 +8,10 @@ from sigma.backends.elasticsearch import LuceneBackend
 class OpensearchLuceneBackend(LuceneBackend):
     """OpensearchLuceneBackend backend."""
 
-    def __init__(self, processing_pipeline: Optional["sigma.processing.pipeline.ProcessingPipeline"] = None, 
+    def __init__(self, processing_pipeline: Optional["sigma.processing.pipeline.ProcessingPipeline"] = None,
         collect_errors: bool = False, index_names : List = ["beats-*"], monitor_interval : int = 5,
         monitor_interval_unit : str = "MINUTES", **kwargs):
-        
+
         super().__init__(processing_pipeline, collect_errors, **kwargs)
         self.index_names = index_names or ["beats-*"]
         self.monitor_interval = monitor_interval or 5
@@ -88,3 +88,11 @@ class OpensearchLuceneBackend(LuceneBackend):
         # the single generated queries are embedded into a structure, e.g. some JSON or XML that can be imported into
         # the SIEM.
         return list(queries)
+
+    def finalize_query_dashboards_ndjson(self, rule: SigmaRule, query: str, index: int, state: ConversionState) -> str:
+        """Alias to Kibana NDJSON query finalization."""
+        return self.finalize_query_kibana_ndjson(rule, query, index, state)
+
+    def finalize_output_dashboards_ndjson(self, queries: List[str]) -> str:
+        """Alias to Kibana NDJSON output finalization."""
+        return self.finalize_output_kibana_ndjson(queries)

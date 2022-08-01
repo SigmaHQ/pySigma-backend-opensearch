@@ -236,8 +236,23 @@ def test_os_monitor_and_expression(es_qs_backend : OpensearchLuceneBackend):
         rule, output_format='monitor_rule'
     ) == [result]
 
-def test_elasticsearch_dql_output(es_qs_backend : OpensearchLuceneBackend):
-    """Test for output format dql."""
-    # TODO: implement a test for the output format
-    pass
-
+def test_os_monitor_and_expression(es_qs_backend : OpensearchLuceneBackend):
+    rule = SigmaCollection.from_yaml("""
+        title: Test
+        status: test
+        tags:
+            - ns.tag1
+            - ns.tag2
+        references:
+            - https://reference.org
+        level: high
+        logsource:
+            category: test_category
+            product: test_product
+        detection:
+            sel:
+                fieldA: valueA
+                fieldB: valueB
+            condition: sel
+    """)
+    assert es_qs_backend.convert(rule, "dashboards_ndjson") == es_qs_backend.convert(rule, "kibana_ndjson")

@@ -122,11 +122,11 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "pycodestyle"
-version = "2.8.0"
+version = "2.9.0"
 description = "Python style guide checker"
 category = "dev"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+python-versions = ">=3.6"
 
 [[package]]
 name = "pyparsing"
@@ -157,17 +157,10 @@ version = "0.1.0"
 description = "pySigma Elasticsearch backend"
 category = "main"
 optional = false
-python-versions = "^3.8"
-develop = false
+python-versions = ">=3.8,<4.0"
 
 [package.dependencies]
-pysigma = "^0.7.1"
-
-[package.source]
-type = "git"
-url = "https://github.com/SigmaHQ/pySigma-backend-elasticsearch.git"
-reference = "main"
-resolved_reference = "60550e1ff4455c70f85910c255662e4b83edc68e"
+pysigma = ">=0.7.1,<0.8.0"
 
 [[package]]
 name = "pytest"
@@ -263,7 +256,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "05a8c4bc72c5fe1ff0c832e9d8ccf209884d1a365d88fd7047f76404eeb772f0"
+content-hash = "ba6ba26b521f92254444f6aefc84b29970a870998a793b91ae63d43cf740004e"
 
 [metadata.files]
 atomicwrites = []
