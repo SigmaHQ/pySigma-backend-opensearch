@@ -3,11 +3,11 @@ from sigma.backends.opensearch import OpensearchLuceneBackend
 from sigma.collection import SigmaCollection
 
 @pytest.fixture
-def es_qs_backend():
+def os_lucene_backend():
     return OpensearchLuceneBackend()
 
-def test_os_qs_and_expression(es_qs_backend : OpensearchLuceneBackend):
-    assert es_qs_backend.convert(
+def test_os_lucene_and_expression(os_lucene_backend : OpensearchLuceneBackend):
+    assert os_lucene_backend.convert(
         SigmaCollection.from_yaml("""
             title: Test
             status: test
@@ -22,8 +22,8 @@ def test_os_qs_and_expression(es_qs_backend : OpensearchLuceneBackend):
         """)
     ) == ['fieldA:valueA AND fieldB:valueB']
 
-def test_os_qs_or_expression(es_qs_backend : OpensearchLuceneBackend):
-    assert es_qs_backend.convert(
+def test_os_lucene_or_expression(os_lucene_backend : OpensearchLuceneBackend):
+    assert os_lucene_backend.convert(
         SigmaCollection.from_yaml("""
             title: Test
             status: test
@@ -39,8 +39,8 @@ def test_os_qs_or_expression(es_qs_backend : OpensearchLuceneBackend):
         """)
     ) == ['fieldA:valueA OR fieldB:valueB']
 
-def test_os_qs_and_or_expression(es_qs_backend : OpensearchLuceneBackend):
-    assert es_qs_backend.convert(
+def test_os_lucene_and_or_expression(os_lucene_backend : OpensearchLuceneBackend):
+    assert os_lucene_backend.convert(
         SigmaCollection.from_yaml("""
             title: Test
             status: test
@@ -59,8 +59,8 @@ def test_os_qs_and_or_expression(es_qs_backend : OpensearchLuceneBackend):
         """)
     ) == ['(fieldA:(valueA1 OR valueA2)) AND (fieldB:(valueB1 OR valueB2))']
 
-def test_os_qs_or_and_expression(es_qs_backend : OpensearchLuceneBackend):
-    assert es_qs_backend.convert(
+def test_os_lucene_or_and_expression(os_lucene_backend : OpensearchLuceneBackend):
+    assert os_lucene_backend.convert(
         SigmaCollection.from_yaml("""
             title: Test
             status: test
@@ -78,8 +78,8 @@ def test_os_qs_or_and_expression(es_qs_backend : OpensearchLuceneBackend):
         """)
     ) == ['(fieldA:valueA1 AND fieldB:valueB1) OR (fieldA:valueA2 AND fieldB:valueB2)']
 
-def test_os_qs_in_expression(es_qs_backend : OpensearchLuceneBackend):
-    assert es_qs_backend.convert(
+def test_os_lucene_in_expression(os_lucene_backend : OpensearchLuceneBackend):
+    assert os_lucene_backend.convert(
         SigmaCollection.from_yaml("""
             title: Test
             status: test
@@ -96,8 +96,8 @@ def test_os_qs_in_expression(es_qs_backend : OpensearchLuceneBackend):
         """)
     ) == ['fieldA:(valueA OR valueB OR valueC*)']
 
-def test_os_qs_regex_query(es_qs_backend : OpensearchLuceneBackend):
-    assert es_qs_backend.convert(
+def test_os_lucene_regex_query(os_lucene_backend : OpensearchLuceneBackend):
+    assert os_lucene_backend.convert(
         SigmaCollection.from_yaml("""
             title: Test
             status: test
@@ -112,8 +112,8 @@ def test_os_qs_regex_query(es_qs_backend : OpensearchLuceneBackend):
         """)
     ) == ['fieldA:/foo.*bar/ AND fieldB:foo']
 
-def test_os_qs_cidr_query(es_qs_backend : OpensearchLuceneBackend):
-    assert es_qs_backend.convert(
+def test_os_lucene_cidr_query(os_lucene_backend : OpensearchLuceneBackend):
+    assert os_lucene_backend.convert(
         SigmaCollection.from_yaml("""
             title: Test
             status: test
@@ -127,8 +127,8 @@ def test_os_qs_cidr_query(es_qs_backend : OpensearchLuceneBackend):
         """)
     ) == ['field:192.168.0.0\\/16']
 
-def test_os_qs_field_name_with_whitespace(es_qs_backend : OpensearchLuceneBackend):
-    assert es_qs_backend.convert(
+def test_os_lucene_field_name_with_whitespace(os_lucene_backend : OpensearchLuceneBackend):
+    assert os_lucene_backend.convert(
         SigmaCollection.from_yaml("""
             title: Test
             status: test
@@ -142,8 +142,8 @@ def test_os_qs_field_name_with_whitespace(es_qs_backend : OpensearchLuceneBacken
         """)
     ) == ['field\\ name:value']
 
-def test_os_qs_listmapmix_all(es_qs_backend : OpensearchLuceneBackend):
-    assert es_qs_backend.convert(
+def test_os_lucene_listmapmix_all(os_lucene_backend : OpensearchLuceneBackend):
+    assert os_lucene_backend.convert(
         SigmaCollection.from_yaml("""
             title: Test
             status: test
@@ -160,7 +160,7 @@ def test_os_qs_listmapmix_all(es_qs_backend : OpensearchLuceneBackend):
         """)
     ) == ['(fieldA:valueA OR fieldB:valueB) AND fieldC:valueC']
 
-def test_os_monitor_and_expression(es_qs_backend : OpensearchLuceneBackend):
+def test_os_monitor_and_expression(os_lucene_backend : OpensearchLuceneBackend):
     rule = SigmaCollection.from_yaml("""
         title: Test
         status: test
@@ -232,11 +232,11 @@ def test_os_monitor_and_expression(es_qs_backend : OpensearchLuceneBackend):
         },
         "references": rule.rules[0].references
     }
-    assert es_qs_backend.convert(
+    assert os_lucene_backend.convert(
         rule, output_format='monitor_rule'
     ) == [result]
 
-def test_os_monitor_and_expression(es_qs_backend : OpensearchLuceneBackend):
+def test_os_monitor_and_expression(os_lucene_backend : OpensearchLuceneBackend):
     rule = SigmaCollection.from_yaml("""
         title: Test
         status: test
@@ -255,4 +255,4 @@ def test_os_monitor_and_expression(es_qs_backend : OpensearchLuceneBackend):
                 fieldB: valueB
             condition: sel
     """)
-    assert es_qs_backend.convert(rule, "dashboards_ndjson") == es_qs_backend.convert(rule, "kibana_ndjson")
+    assert os_lucene_backend.convert(rule, "dashboards_ndjson") == os_lucene_backend.convert(rule, "kibana_ndjson")
