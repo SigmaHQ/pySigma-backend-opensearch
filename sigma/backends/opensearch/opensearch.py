@@ -17,7 +17,7 @@ class OpensearchLuceneBackend(LuceneBackend):
         self.monitor_interval = monitor_interval or 5
         self.monitor_interval_unit = monitor_interval_unit or "MINUTES"
 
-    def finalize_query_monitor_rule(self, rule: SigmaRule, query: str, index: int, state: ConversionState) -> str:
+    def finalize_query_monitor_rule(self, rule: SigmaRule, query: str, index: int, state: ConversionState) -> dict:
         # TODO: implement the per-query output for the output format lql here. Usually, the generated query is
         # embedded into a template, e.g. a JSON format with additional information from the Sigma rule.
         severity_mapping = {
