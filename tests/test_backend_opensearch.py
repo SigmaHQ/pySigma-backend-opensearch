@@ -236,7 +236,7 @@ def test_os_monitor_and_expression(os_lucene_backend : OpensearchLuceneBackend):
         rule, output_format='monitor_rule'
     ) == [result]
 
-def test_os_monitor_and_expression(os_lucene_backend : OpensearchLuceneBackend):
+def test_os_ndjson_alias(os_lucene_backend : OpensearchLuceneBackend):
     rule = SigmaCollection.from_yaml("""
         title: Test
         status: test
