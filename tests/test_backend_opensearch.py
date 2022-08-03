@@ -236,6 +236,25 @@ def test_os_monitor_and_expression(os_lucene_backend : OpensearchLuceneBackend):
         rule, output_format='monitor_rule'
     ) == [result]
 
+def test_os_monitor_without_level(os_lucene_backend : OpensearchLuceneBackend):
+    assert os_lucene_backend.convert(SigmaCollection.from_yaml("""
+        title: Test
+        status: test
+        tags:
+            - ns.tag1
+            - ns.tag2
+        references:
+            - https://reference.org
+        logsource:
+            category: test_category
+            product: test_product
+        detection:
+            sel:
+                fieldA: valueA
+                fieldB: valueB
+            condition: sel
+    """), "monitor_rule")[0]["triggers"][0]["severity"] == 1
+
 def test_os_ndjson_alias(os_lucene_backend : OpensearchLuceneBackend):
     rule = SigmaCollection.from_yaml("""
         title: Test

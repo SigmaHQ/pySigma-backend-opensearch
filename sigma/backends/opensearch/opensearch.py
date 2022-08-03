@@ -64,7 +64,7 @@ class OpensearchLuceneBackend(LuceneBackend):
             "triggers": [
                 {
                     "name": "generated-trigger",
-                    "severity": severity_mapping[rule.level.value] or 1,
+                    "severity": severity_mapping[rule.level.value] if rule.level is not None else 1,
                     "condition": {
                         "script": {
                             "source": "ctx.results[0].hits.total.value > 0",
