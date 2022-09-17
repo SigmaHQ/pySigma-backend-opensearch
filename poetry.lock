@@ -141,7 +141,7 @@ diagrams = ["railroad-diagrams", "jinja2"]
 
 [[package]]
 name = "pysigma"
-version = "0.7.2"
+version = "0.8.1"
 description = "Sigma rule processing and conversion tools"
 category = "main"
 optional = false
@@ -153,14 +153,14 @@ pyyaml = ">=6.0,<7.0"
 
 [[package]]
 name = "pysigma-backend-elasticsearch"
-version = "0.1.0"
+version = "0.1.1"
 description = "pySigma Elasticsearch backend"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 
 [package.dependencies]
-pysigma = ">=0.7.1,<0.8.0"
+pysigma = ">=0.8.0,<0.9.0"
 
 [[package]]
 name = "pytest"
@@ -256,7 +256,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "ba6ba26b521f92254444f6aefc84b29970a870998a793b91ae63d43cf740004e"
+content-hash = "5bdcea5bd386440419a126223bf20506ada7ced22b2f12248628e7fe6e6e027c"
 
 [metadata.files]
 atomicwrites = []
