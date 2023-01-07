@@ -27,7 +27,17 @@ backend (eg. Monitor Rules).
 
 # Howto
 
-## Create Alerting Rules
+## Create Output - sigma-cli
+
+```
+sigma convert \
+  -t opensearch \
+  -p ecs_windows \
+  -f monitor_rule \
+  /data/sigma/rules/windows/process_creation/proc_creation_win_whoami_priv.yml
+```
+
+## Create Alerting Rules - Python
 
 ```
 from sigma.backends.opensearch import OpensearchLuceneBackend
