@@ -5,31 +5,40 @@ import time
 from sigma.backends.opensearch import OpensearchLuceneBackend
 from sigma.collection import SigmaCollection
 
+def os_available_test():
+    try:
+        requests.get('http://localhost:9200/')
+    except requests.exceptions.ConnectionError:
+        return False
+    return True
+
 @pytest.fixture(scope="class")
 def prepare_es_data():
-    requests.delete('http://localhost:9200/test-index')
-    requests.put("http://localhost:9200/test-index")
-    requests.put("http://localhost:9200/test-index/_mapping", json={
-        "properties": {
-            "field": {
-               "type": "ip"
+    if os_available_test():
+        requests.delete('http://localhost:9200/test-index')
+        requests.put("http://localhost:9200/test-index")
+        requests.put("http://localhost:9200/test-index/_mapping", json={
+            "properties": {
+                "field": {
+                "type": "ip"
+                }
             }
         }
-    }
-    )
-    requests.post("http://localhost:9200/test-index/_doc/", json={ "fieldA" : "valueA", "fieldB" : "valueB" })
-    requests.post("http://localhost:9200/test-index/_doc/", json={ "fieldA" : "valueA1", "fieldB" : "valueB1" })
-    requests.post("http://localhost:9200/test-index/_doc/", json={ "fieldA" : "valueA2", "fieldB" : "valueB2" })
-    requests.post("http://localhost:9200/test-index/_doc/", json={ "fieldA" : "foosamplebar", "fieldB" : "foo" })
-    requests.post("http://localhost:9200/test-index/_doc/", json={ "field" : "192.168.1.1" })
-    requests.post("http://localhost:9200/test-index/_doc/", json={ "field name" : "value" })
-    # Wait a bit for Documents to be indexed
-    time.sleep(1)
+        )
+        requests.post("http://localhost:9200/test-index/_doc/", json={ "fieldA" : "valueA", "fieldB" : "valueB" })
+        requests.post("http://localhost:9200/test-index/_doc/", json={ "fieldA" : "valueA1", "fieldB" : "valueB1" })
+        requests.post("http://localhost:9200/test-index/_doc/", json={ "fieldA" : "valueA2", "fieldB" : "valueB2" })
+        requests.post("http://localhost:9200/test-index/_doc/", json={ "fieldA" : "foosamplebar", "fieldB" : "foo" })
+        requests.post("http://localhost:9200/test-index/_doc/", json={ "field" : "192.168.1.1" })
+        requests.post("http://localhost:9200/test-index/_doc/", json={ "field name" : "value" })
+        # Wait a bit for Documents to be indexed
+        time.sleep(1)
 
 @pytest.fixture
 def lucene_backend():
     return OpensearchLuceneBackend()
 
+@pytest.mark.skipif(os_available_test() == False, reason="ES not available")
 class TestConnectOpensearch:
 
     def query_backend_hits(self, query, num_wanted=0):
