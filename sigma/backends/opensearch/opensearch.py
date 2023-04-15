@@ -1,24 +1,25 @@
+from typing import ClassVar, Dict, List, Optional
 from sigma.conversion.state import ConversionState
 from sigma.rule import SigmaRule
-import sigma
-import json
-from typing import ClassVar, Dict, List, Optional
 from sigma.backends.elasticsearch import LuceneBackend
+import sigma
+
 
 class OpensearchLuceneBackend(LuceneBackend):
     """OpensearchLuceneBackend backend."""
-    name : ClassVar[str] = "OpenSearch Lucene"            # A descriptive name of the backend
-    formats : ClassVar[Dict[str, str]] = {                # Output formats provided by the backend as name -> description mapping. The name should match to finalize_output_<name>.
+    name: ClassVar[str] = "OpenSearch Lucene"            # A descriptive name of the backend
+    formats: ClassVar[Dict[str, str]] = {                # Output formats provided by the backend as name -> description mapping. The name should match to finalize_output_<name>.
         "default": "Plain OpenSearch Lucene queries",
         "dashboards_ndjson": "OpenSearch Dashboards NDJSON import file with Lucene queries",
         "monitor_rule": "OpenSearch monitor rule with embedded Lucene query",
         "dsl_lucene": "OpenSearch query DSL with embedded Lucene queries",
     }
-    requires_pipeline : ClassVar[bool] = True             # Does the backend requires that a processing pipeline is provided?
+    # Does the backend requires that a processing pipeline is provided?
+    requires_pipeline: ClassVar[bool] = True
 
     def __init__(self, processing_pipeline: Optional["sigma.processing.pipeline.ProcessingPipeline"] = None,
-        collect_errors: bool = False, index_names : List = ["beats-*"], monitor_interval : int = 5,
-        monitor_interval_unit : str = "MINUTES", **kwargs):
+                 collect_errors: bool = False, index_names: List = ["beats-*"], monitor_interval: int = 5,
+                 monitor_interval_unit: str = "MINUTES", **kwargs):
 
         super().__init__(processing_pipeline, collect_errors, **kwargs)
         self.index_names = index_names or ["beats-*"]
@@ -26,8 +27,6 @@ class OpensearchLuceneBackend(LuceneBackend):
         self.monitor_interval_unit = monitor_interval_unit or "MINUTES"
 
     def finalize_query_monitor_rule(self, rule: SigmaRule, query: str, index: int, state: ConversionState) -> dict:
-        # TODO: implement the per-query output for the output format lql here. Usually, the generated query is
-        # embedded into a template, e.g. a JSON format with additional information from the Sigma rule.
         severity_mapping = {
             5: 1,
             4: 2,
@@ -37,7 +36,7 @@ class OpensearchLuceneBackend(LuceneBackend):
         }
         monitor_rule = {
             "type": "monitor",
-            "name": "SIGMA - {}".format(rule.title),
+            "name": f"SIGMA - {rule.title}",
             "description": rule.description,
             "enabled": True,
             "schedule": {
@@ -68,7 +67,7 @@ class OpensearchLuceneBackend(LuceneBackend):
                     }
                 }
             ],
-            "tags": ["{}-{}".format(n.namespace, n.name) for n in rule.tags],
+            "tags": [f"{n.namespace}-{n.name}" for n in rule.tags],
             "triggers": [
                 {
                     "name": "generated-trigger",
@@ -92,9 +91,6 @@ class OpensearchLuceneBackend(LuceneBackend):
         return monitor_rule
 
     def finalize_output_monitor_rule(self, queries: List[str]) -> str:
-        # TODO: implement the output finalization for all generated queries for the format lql here. Usually,
-        # the single generated queries are embedded into a structure, e.g. some JSON or XML that can be imported into
-        # the SIEM.
         return list(queries)
 
     def finalize_query_dashboards_ndjson(self, rule: SigmaRule, query: str, index: int, state: ConversionState) -> str:
