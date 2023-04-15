@@ -7,6 +7,14 @@ from sigma.backends.elasticsearch import LuceneBackend
 
 class OpensearchLuceneBackend(LuceneBackend):
     """OpensearchLuceneBackend backend."""
+    name : ClassVar[str] = "OpenSearch Lucene"            # A descriptive name of the backend
+    formats : ClassVar[Dict[str, str]] = {                # Output formats provided by the backend as name -> description mapping. The name should match to finalize_output_<name>.
+        "default": "Plain OpenSearch Lucene queries",
+        "dashboards_ndjson": "OpenSearch Dashboards NDJSON import file with Lucene queries",
+        "monitor_rule": "OpenSearch monitor rule with embedded Lucene query",
+        "dsl_lucene": "OpenSearch query DSL with embedded Lucene queries",
+    }
+    requires_pipeline : ClassVar[bool] = True             # Does the backend requires that a processing pipeline is provided?
 
     def __init__(self, processing_pipeline: Optional["sigma.processing.pipeline.ProcessingPipeline"] = None,
         collect_errors: bool = False, index_names : List = ["beats-*"], monitor_interval : int = 5,
