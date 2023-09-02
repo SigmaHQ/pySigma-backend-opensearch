@@ -9,13 +9,16 @@ on:
 jobs:
   build-and-publish:
     runs-on: ubuntu-20.04
+    environment: release
+    permissions:
+      id-token: write
     steps:
       - uses: ankane/setup-opensearch@v1
       - uses: actions/checkout@v3
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: 3.11
       - name: Install Poetry
         run: pipx install poetry
       - name: Verify versioning
@@ -34,7 +37,9 @@ jobs:
           poetry config pypi-token.pypi "${{ secrets.PYPI_API_TOKEN }}"
       - name: Publish to test PyPI
         if: ${{ github.event_name == 'push' }}
-        run: poetry publish -r testpypi
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
       - name: Publish to PyPI
         if: ${{ github.event_name == 'release' }}
-        run: poetry publish
+        uses: pypa/gh-action-pypi-publish@release/v1
