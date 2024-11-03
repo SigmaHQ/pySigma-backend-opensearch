@@ -47,7 +47,7 @@ def lucene_backend():
     return OpensearchLuceneBackend()
 
 
-@pytest.mark.skipif(os_available_test() == False, reason="ES not available")
+@pytest.mark.skipif(os_available_test() == False, reason="OpenSearch not available")
 class TestConnectOpensearch:
 
     def query_backend_hits(self, query, num_wanted=0):
