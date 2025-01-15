@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pySigma-backend-opensearch"
-version = "1.0.3"
+version = "1.0.4"
 description = "pySigma OpenSearch backend"
 readme = "README.md"
 authors = ["Hendrik Baecker <hendrik.baecker@dcso.de>"]
