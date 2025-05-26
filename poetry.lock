@@ -537,18 +537,19 @@ requests = ">=2.31,<3.0"
 
 [[package]]
 name = "pysigma-backend-elasticsearch"
-version = "1.1.5"
+version = "1.1.6"
 description = "pySigma Elasticsearch backend supporting Lucene, ES|QL (with correlations) and EQL queries"
 optional = false
 python-versions = "<4.0,>=3.9"
 groups = ["main"]
 files = [
-    {file = "pysigma_backend_elasticsearch-1.1.5-py3-none-any.whl", hash = "sha256:37b8abe35464c29c4ae69d12f26739c7fc874160c9108a44df2b38932202ecc5"},
-    {file = "pysigma_backend_elasticsearch-1.1.5.tar.gz", hash = "sha256:847ac473f0153c05cdde6fb8747955ad4b9e98966d5f2c61ce009a2c5c9ce92a"},
+    {file = "pysigma_backend_elasticsearch-1.1.6-py3-none-any.whl", hash = "sha256:beda1b48291dbac1123f0d96aeb25a6b114cdd9139359b14c848e1bf9f028e9f"},
+    {file = "pysigma_backend_elasticsearch-1.1.6.tar.gz", hash = "sha256:d72012b74866ca7a62109405f2af79be0627b0fc0aad3fa44d5f165e491d6b43"},
 ]
 
 [package.dependencies]
 pysigma = ">=0.11.7,<0.12.0"
+pyyaml = ">=6.0.2,<7.0.0"
 
 [[package]]
 name = "pytest"
