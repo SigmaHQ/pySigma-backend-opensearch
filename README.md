@@ -3,11 +3,16 @@
 Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/andurin/e95ff0904786bd5883f19105b6a3a1ee/raw/SigmaHQ-pySigma-backend-opensearch.json)
 ![Status](https://img.shields.io/badge/Status-pre--release-orange)
 
-# pySigma Opensearch Lucene Backend
+# pySigma OpenSearch Backend
 
-This is the Opensearch Lucene backend for pySigma. It provides the package `sigma.backends.opensearch` with the `OpensearchLuceneBackend` class.
+This is the OpenSearch backend for pySigma. It provides the package `sigma.backends.opensearch` with two backend classes:
 
-It supports the following output formats:
+* **`OpensearchLuceneBackend`** - Converts Sigma rules to Lucene query syntax
+* **`OpenSearchPPLBackend`** - Converts Sigma rules to PPL (Piped Processing Language) queries
+
+## Lucene Backend
+
+The Lucene backend supports the following output formats:
 
 * default: plain Opensearch queries in Lucene Syntax 
   * **Hint:** In Dashboard you have to switch from DQL to Lucene
@@ -19,15 +24,32 @@ This backend is currently maintained by:
 
 # Background
 
+## Lucene Backend
+
 Since Lucene based queries are very identical to Elasticsearch Lucene queries, most 
 of the code for this Backend comes from [pySigma-backend-elasticsearch](https://github.com/SigmaHQ/pySigma-backend-elasticsearch). 
 
 Opensearch specific changes and output formats are done in this 
 backend (eg. Monitor Rules).
 
+## PPL Backend
+
+The PPL (Piped Processing Language) backend is implemented from scratch to support OpenSearch's native query language. PPL provides:
+* **Correlation support** - Built-in support for Sigma correlation rules
+
+### Correlation Rules Support
+
+The PPL backend fully supports Sigma correlation rules, enabling detection of complex multi-event scenarios:
+
+* **event_count** - Count occurrences of events (e.g., brute force detection)
+* **value_count** - Count distinct values of a field (e.g., password spraying)
+* **temporal** - Multiple different events within a time window (e.g., multi-stage attacks)
+
 # Howto
 
 ## Create Output - sigma-cli
+
+### Lucene Backend
 
 ```
 sigma convert \
@@ -37,7 +59,18 @@ sigma convert \
   /data/sigma/rules/windows/process_creation/proc_creation_win_whoami_priv.yml
 ```
 
+### PPL Backend
+
+```
+sigma convert \
+  -t opensearch-ppl \
+  -p ecs_windows \
+  /data/sigma/rules/windows/process_creation/proc_creation_win_whoami_priv.yml
+```
+
 ## Create Alerting Rules - Python
+
+### Lucene Backend
 
 ```
 from sigma.backends.opensearch import OpensearchLuceneBackend
@@ -192,50 +225,64 @@ Monitor Rule Result:
 }
 ```
 
----
-
-# OpenSearch PPL Backend for Sigma Rules
-
-A pySigma backend that converts Sigma detection rules into PPL (Piped Processing Language) queries for OpenSearch.
-
-## Overview
-
-Converts Sigma rules (regular and correlation) to OpenSearch PPL queries. Built on pySigma's `TextQueryBackend` class.
-
-## Usage
-
-### Basic Example
+### PPL Backend
 
 ```python
-from sigma_backend.backends.opensearch_ppl import OpenSearchPPLBackend
+from sigma.backends.opensearch.opensearch_ppl import OpenSearchPPLBackend
 from sigma.collection import SigmaCollection
 
-# Load rule
-rule_yaml = """
-title: Mimikatz Detection
-logsource:
-  product: windows
-  category: process_creation
-detection:
-  selection:
-    Image|endswith: '\\mimikatz.exe'
-  condition: selection
-"""
-
-# Convert
+# Instantiate PPL backend
 backend = OpenSearchPPLBackend()
-sigma_rules = SigmaCollection.from_yaml(rule_yaml)
-ppl_queries = backend.convert(sigma_rules)
 
-print(ppl_queries[0])
-# Output: source=windows-process_creation-* | where LIKE(Image, "%\\mimikatz.exe")
+# Use the same rule as above
+rules = SigmaCollection.from_yaml("""
+title: Run Whoami Showing Privileges
+id: 97a80ec7-0e2f-4d05-9ef4-65760e634f6b
+status: experimental
+description: Detects a whoami.exe executed with the /priv command line flag instructing the tool to show all current user privieleges. This is often used after a privilege escalation attempt. 
+references:
+    - https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/whoami
+author: Florian Roth
+date: 2021/05/05
+modified: 2022/05/13
+tags:
+    - attack.privilege_escalation
+    - attack.discovery
+    - attack.t1033
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_img:
+        - Image|endswith: '\whoami.exe'
+        - OriginalFileName: 'whoami.exe'
+    selection_cli:
+        CommandLine|contains: '/priv'
+    condition: all of selection*
+falsepositives:
+    - Administrative activity (rare lookups on current privileges)
+level: high
+""")
+
+# Print converted rule in PPL syntax
+print("PPL Result: \n" + "\n".join(backend.convert(rules)))
 ```
 
-### Correlation Rules
+PPL Result:
+```
+source=windows-process_creation-* | where (LIKE(Image, "%\whoami.exe") OR OriginalFileName="whoami.exe") AND LIKE(CommandLine, "%/priv%")
+```
 
-**Event Count Example** (Brute Force):
+## PPL Correlation Rules Example
+
 ```python
-rule_yaml = """
+from sigma.backends.opensearch.opensearch_ppl import OpenSearchPPLBackend
+from sigma.collection import SigmaCollection
+
+backend = OpenSearchPPLBackend()
+
+# Brute force detection using event_count correlation
+rules = SigmaCollection.from_yaml("""
 title: Windows Failed Logon Event
 name: failed_logon
 logsource:
@@ -259,170 +306,36 @@ correlation:
   timespan: 5m
   condition:
     gte: 10
-"""
+""")
 
-backend = OpenSearchPPLBackend()
-collection = SigmaCollection.from_yaml(rule_yaml)
-queries = backend.convert(collection)
-
-# Output: | search source=windows-security-* | where EventID=4625 AND NOT LIKE(SubjectUserName, "%$") | stats count() as event_count by TargetUserName, TargetDomainName | where event_count >= 10
+print("Correlation PPL Result: \n" + "\n".join(backend.convert(rules)))
 ```
 
-**Value Count Example** (Password Spraying):
-```python
-rule_yaml = """
-title: Failed Logon Event
-name: failed_logon_event
-logsource:
-  product: windows
-  service: security
-detection:
-  selection:
-    EventID: 4625
-  condition: selection
----
-title: Password Spraying Detection
-correlation:
-  type: value_count
-  rules:
-    - failed_logon_event
-  group-by:
-    - IpAddress
-  timespan: 30m
-  condition:
-    gte: 10
-    field: TargetUserName
-"""
-
-backend = OpenSearchPPLBackend()
-collection = SigmaCollection.from_yaml(rule_yaml)
-queries = backend.convert(collection)
-
-# Output: | search source=windows-security-* | where EventID=4625 | stats dc(TargetUserName) as value_count by IpAddress | where value_count >= 10
+Correlation PPL Result:
+```
+| search source=windows-security-* | where EventID=4625 AND NOT LIKE(SubjectUserName, "%$") | stats count() as event_count by TargetUserName, TargetDomainName | where event_count >= 10
 ```
 
-**Temporal Example** (Multi-rule correlation):
-```python
-rule_yaml = """
-title: Windows Failed Logon
-name: win_failed_logon
-logsource:
-  product: windows
-  service: security
-detection:
-  selection:
-    EventID: 4625
-  condition: selection
----
-title: Windows Successful Logon
-name: win_successful_logon
-logsource:
-  product: windows
-  service: security
-detection:
-  selection:
-    EventID: 4624
-    LogonType: 3
-  condition: selection
----
-title: Successful Brute Force
-correlation:
-  type: temporal
-  rules:
-    - win_failed_logon
-    - win_successful_logon
-  group-by:
-    - IpAddress
-    - TargetUserName
-  timespan: 10m
-"""
+# Custom Attributes
 
-backend = OpenSearchPPLBackend()
-collection = SigmaCollection.from_yaml(rule_yaml)
-queries = backend.convert(collection)
+Both backends support custom attributes in Sigma rules.
 
-# Output: | multisearch [search source=windows-security-* | where EventID=4625] [search source=windows-security-* | where EventID=4624 AND LogonType=3] | stats dc(EventID) as unique_rules by span(@timestamp, 10m), IpAddress, TargetUserName | where unique_rules >= 2
-```
+## PPL Backend Custom Attributes
 
-### Backend Options & Custom Attributes
+The PPL backend supports the following custom attributes that can be specified in the `custom` section of a Sigma rule:
 
-**Backend Options** - Apply to all rules:
-```python
-backend = OpenSearchPPLBackend(
-    custom_logsource="security-logs-*",
-    min_time="-7d",
-    max_time="now"
-)
-```
-
-**Custom Attributes** - Override per-rule in YAML:
 ```yaml
 custom:
-  opensearch_ppl_index: "custom-logs-*"
-  opensearch_ppl_min_time: "-30d"
-  opensearch_ppl_max_time: "now"
+  opensearch_ppl_index: "custom-logs-*"        # Override default index pattern
+  opensearch_ppl_min_time: "-30d"              # Set query time window start
+  opensearch_ppl_max_time: "now"               # Set query time window end
 ```
 
-**Complex Example** - Combining both:
-```python
-from sigma_backend.backends.opensearch_ppl import OpenSearchPPLBackend
-from sigma.collection import SigmaCollection
+### Example with Custom Attributes
 
-# Backend with default time window (last 7 days)
-backend = OpenSearchPPLBackend(
-    min_time="-7d",
-    max_time="now"
-)
+This example shows how custom attributes work with correlation rules, where individual detection rules can have their own time windows or inherit from the correlation rule:
 
-rule_yaml = """
-title: Suspicious PowerShell Execution
-logsource:
-  product: windows
-  category: process_creation
-detection:
-  selection:
-    Image|endswith: '\\powershell.exe'
-    CommandLine|contains:
-      - '-enc'
-      - '-encodedcommand'
-  condition: selection
----
-title: Critical System File Access (Extended Window)
-logsource:
-  product: windows
-  category: file_event
-detection:
-  selection:
-    TargetFilename|contains: '\\System32\\config\\'
-  condition: selection
-custom:
-  opensearch_ppl_index: "windows-audit-*"
-  opensearch_ppl_min_time: "-30d"
-  opensearch_ppl_max_time: "now"
-"""
-
-collection = SigmaCollection.from_yaml(rule_yaml)
-queries = backend.convert(collection)
-
-# First rule uses backend default (7 days):
-# source=windows-process_creation-* | where (LIKE(Image, "%\\powershell.exe")) AND (CommandLine in ("-enc", "-encodedcommand")) AND (@timestamp >= now() - 7d AND @timestamp <= now())
-
-# Second rule overrides with custom attributes (30 days + custom index):
-# source=windows-audit-* | where (LIKE(TargetFilename, "%\\System32\\config\\")) AND (@timestamp >= now() - 30d AND @timestamp <= now())
-```
-
-**Complex Correlation Example** - Mixed time filters (detection rules with different time windows):
-```python
-from sigma_backend.backends.opensearch_ppl import OpenSearchPPLBackend
-from sigma.collection import SigmaCollection
-
-# Backend with default settings
-backend = OpenSearchPPLBackend(
-    min_time="-24h",
-    max_time="now"
-)
-
-rule_yaml = """
+```yaml
 title: Detection Rule 1 - With Own Time Filter
 id: 10000400-0000-0000-0000-000000000004
 logsource:
@@ -433,7 +346,7 @@ detection:
     CommandLine|contains: 'malware'
   condition: selection
 custom:
-  opensearch_ppl_min_time: "-7d"
+  opensearch_ppl_min_time: "-7d"    # This rule uses 7 days
   opensearch_ppl_max_time: "now"
 ---
 title: Detection Rule 2 - No Time Filter
@@ -445,10 +358,10 @@ detection:
   selection:
     DestinationPort: 443
   condition: selection
+# No custom attributes - will inherit from correlation
 ---
 title: Correlation - Mixed Time Filters
 id: 10000402-0000-0000-0000-000000000004
-description: Temporal correlation with mixed time filters - one detection rule has its own (7d), one inherits from correlation (30d)
 correlation:
   type: temporal
   rules:
@@ -458,18 +371,24 @@ correlation:
     - Computer
   timespan: 5m
 custom:
-  opensearch_ppl_min_time: "-30d"
+  opensearch_ppl_min_time: "-30d"   # Rule 2 inherits this (30 days)
   opensearch_ppl_max_time: "now"
-"""
-
-collection = SigmaCollection.from_yaml(rule_yaml)
-queries = backend.convert(collection)
-
-# Output - Each detection rule uses its own time window:
-# Rule 1 keeps its own time filter (7 days):
-#   | multisearch [search source=windows-process_creation-* | where LIKE(CommandLine, "%malware%") AND (@timestamp >= now() - 7d AND @timestamp <= now())]
-# Rule 2 inherits from correlation (30 days):
-#   [search source=windows-network_connection-* | where DestinationPort=443 AND (@timestamp >= now() - 30d AND @timestamp <= now())]
-# Final aggregation:
-#   | stats dc(EventID) as unique_rules by span(@timestamp, 5m), Computer | where unique_rules >= 2
 ```
+
+**Result**: 
+- Detection Rule 1 will search the last **7 days** (its own custom attribute)
+- Detection Rule 2 will search the last **30 days** (inherited from correlation rule)
+
+### Backend Options
+
+You can also set default values when instantiating the backend:
+
+```python
+backend = OpenSearchPPLBackend(
+    custom_logsource="default-logs-*",  # Default index pattern for all rules
+    min_time="-24h",                    # Default time window start
+    max_time="now"                      # Default time window end
+)
+```
+
+Custom attributes in individual rules will override these backend-level defaults.
