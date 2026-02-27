@@ -318,7 +318,7 @@ Correlation PPL Result:
 
 # Custom Attributes
 
-Both backends support custom attributes in Sigma rules.
+PPL Backend supports custom attributes in Sigma rules.
 
 ## PPL Backend Custom Attributes
 
