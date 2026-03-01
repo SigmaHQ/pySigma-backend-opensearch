@@ -316,9 +316,9 @@ Correlation PPL Result:
 | search source=windows-security-* | where EventID=4625 AND NOT LIKE(SubjectUserName, "%$") | stats count() as event_count by TargetUserName, TargetDomainName | where event_count >= 10
 ```
 
-# Custom Attributes
+# Configuration
 
-PPL Backend supports custom attributes in Sigma rules.
+You can configure PPL backend behavior with custom attributes in Sigma rules or backend initialization options.
 
 ## PPL Backend Custom Attributes
 

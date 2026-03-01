@@ -400,9 +400,10 @@ class OpenSearchPPLBackend(TextQueryBackend):
             if max_time:
                 time_modifiers.append(f"latest={self._format_time_modifier(max_time)}")
             
-            # Construct search command: search [time_modifiers] <query> source=<index>
+            # Construct search command: search [time_modifiers] source=<index> | where <query>
+            # The query condition must come AFTER source with | where
             time_str = " ".join(time_modifiers)
-            ppl_query = f"search {time_str} {query} source={index_pattern}"
+            ppl_query = f"search {time_str} source={index_pattern} | where {query}"
         else:
             # Use traditional source | where syntax when no time filters
             ppl_query = f"source={index_pattern} | where {query}"
@@ -491,7 +492,9 @@ class OpenSearchPPLBackend(TextQueryBackend):
             return time_str
         
         # Handle absolute timestamps - wrap in quotes
-        # Support both formats: "2024-01-01T00:00:00" and "2024-01-01 00:00:00"
+        # PPL doesn't accept ISO8601 format with 'T', so convert to space
+        # Convert "2024-01-01T00:00:00" to "2024-01-01 00:00:00"
+        time_str = time_str.replace('T', ' ')
         return f"'{time_str}'"
     
     ### Correlation rule conversion methods ###
@@ -756,3 +759,4 @@ class OpenSearchPPLBackend(TextQueryBackend):
             field = condition.fieldref or ""
         
         return template.format(op=op, count=count, field=field)
+    
