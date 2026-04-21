@@ -13,7 +13,7 @@ packages = [
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
 pysigma-backend-elasticsearch = "^2.0"
-pysigma = "^1.0"
+pysigma = "^1.3.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0"
