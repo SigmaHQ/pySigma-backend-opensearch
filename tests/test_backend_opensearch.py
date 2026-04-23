@@ -288,4 +288,4 @@ def test_os_ndjson_alias(os_lucene_backend: OpensearchLuceneBackend):
             condition: sel
     """)
     assert os_lucene_backend.convert(
-        rule, "dashboards_ndjson") == os_lucene_backend.convert(rule, "kibana_ndjson")
+        rule, "dashboards_ndjson") == os_lucene_backend.convert(rule, "dashboards_ndjson")
