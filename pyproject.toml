@@ -1,6 +1,6 @@
 [project]
 name = "pySigma-backend-opensearch"
-version = "2.0.2"
+version = "2.0.3"
 description = "pySigma OpenSearch backend"
 readme = "README.md"
 authors = [
@@ -9,11 +9,11 @@ authors = [
 license = "LGPL-3.0-only"
 repository = "https://github.com/SigmaHQ/pySigma-backend-opensearch"
 
+requires-python = ">=3.10,<4.0"
 dependencies = [
     "pysigma-backend-elasticsearch (>= 2.0.0)",
     "pysigma (>=1.0.0,<2.0.0)"
 ]
-requires-python = "<4.0,>=3.10"
 
 [tool.poetry]
 packages = [
@@ -24,9 +24,7 @@ packages = [
 pytest = "^9.0"
 pytest-cov = "^7.0"
 coverage = "^7.14"
-requests = "^2.32"
-autopep8 = "^2.3"
-pylint = "^4.0"
+requests = "^2.34"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
