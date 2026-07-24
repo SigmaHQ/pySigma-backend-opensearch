@@ -22,6 +22,12 @@ This backend is currently maintained by:
 
 * [Hendrik Bäcker](https://github.com/andurin/)
 
+## PPL Backend
+
+The PPL backend only supports the default output format, emitting queries that can be used in OpenSearch Dashboards versions newer than 3.4 or through the [PPL search API](https://docs.opensearch.org/latest/sql-and-ppl/sql-and-ppl-api/index/).
+
+OpenSearch monitors using PPL are still a planned/WIP feature in OpenSearch 3.7. This backend will be updated to support them when this feature becomes stable.
+
 # Background
 
 ## Lucene Backend
@@ -322,62 +328,12 @@ You can configure PPL backend behavior with custom attributes in Sigma rules or 
 
 ## PPL Backend Custom Attributes
 
-The PPL backend supports the following custom attributes that can be specified in the `custom` section of a Sigma rule:
+The PPL backend supports the following custom attributes that can be specified in the `opensearch_ppl_backend` section of a Sigma rule:
 
 ```yaml
-custom:
-  opensearch_ppl_index: "custom-logs-*"        # Override default index pattern
-  opensearch_ppl_min_time: "-30d"              # Set query time window start
-  opensearch_ppl_max_time: "now"               # Set query time window end
+opensearch_ppl_backend:
+  index: "custom-logs-*"        # Override default index pattern
 ```
-
-### Example with Custom Attributes
-
-This example shows how custom attributes work with correlation rules, where individual detection rules can have their own time windows or inherit from the correlation rule:
-
-```yaml
-title: Detection Rule 1 - With Own Time Filter
-id: 10000400-0000-0000-0000-000000000004
-logsource:
-  product: windows
-  category: process_creation
-detection:
-  selection:
-    CommandLine|contains: 'malware'
-  condition: selection
-custom:
-  opensearch_ppl_min_time: "-7d"    # This rule uses 7 days
-  opensearch_ppl_max_time: "now"
----
-title: Detection Rule 2 - No Time Filter
-id: 10000401-0000-0000-0000-000000000004
-logsource:
-  product: windows
-  category: network_connection
-detection:
-  selection:
-    DestinationPort: 443
-  condition: selection
-# No custom attributes - will inherit from correlation
----
-title: Correlation - Mixed Time Filters
-id: 10000402-0000-0000-0000-000000000004
-correlation:
-  type: temporal
-  rules:
-    - 10000400-0000-0000-0000-000000000004
-    - 10000401-0000-0000-0000-000000000004
-  group-by:
-    - Computer
-  timespan: 5m
-custom:
-  opensearch_ppl_min_time: "-30d"   # Rule 2 inherits this (30 days)
-  opensearch_ppl_max_time: "now"
-```
-
-**Result**: 
-- Detection Rule 1 will search the last **7 days** (its own custom attribute)
-- Detection Rule 2 will search the last **30 days** (inherited from correlation rule)
 
 ### Backend Options
 
