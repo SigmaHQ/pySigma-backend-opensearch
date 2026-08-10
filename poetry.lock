@@ -606,27 +606,27 @@ diagrams = ["jinja2", "railroad-diagrams"]
 
 [[package]]
 name = "pysigma"
-version = "1.4.0"
+version = "1.5.0"
 description = "Sigma rule processing and conversion tools"
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
 files = [
-    {file = "pysigma-1.4.0-py3-none-any.whl", hash = "sha256:e04db8cce4f0fd7dc8a3a64bc6d3ecaa49b7939d55ee42b12c7152d143eced47"},
-    {file = "pysigma-1.4.0.tar.gz", hash = "sha256:0a9cc76f76470e8097543b653aecf91e59f7de1199c67e36fc57f2831b35eed7"},
+    {file = "pysigma-1.5.0-py3-none-any.whl", hash = "sha256:871452a262aedb17d9e85344142944c5a0ac50e8b57408ec355efeb1329231b6"},
+    {file = "pysigma-1.5.0.tar.gz", hash = "sha256:2c258cf676d2896c94279fb54c7eea664118cf08285bde122b4df75cc7b6b194"},
 ]
 
 [package.dependencies]
 diskcache = ">=5.6.3,<6.0.0"
 diskcache-stubs = ">=5.6.3"
 jinja2 = ">=3.1.6,<4.0.0"
-jq = ">=1.6,<2.0"
+jq = ">=1.12,<2.0"
 packaging = ">=26.0,<27.0"
 pyparsing = ">=3.2.5,<4.0.0"
 pyyaml = ">=6.0.3,<7.0.0"
 requests = ">=2.32.5,<3.0.0"
-types-pyyaml = ">=6.0.12.20250915,<7.0.0.0"
-typing-extensions = ">=4.15.0,<5.0.0"
+types-pyyaml = ">=6.0.12.20260724,<7.0.0.0"
+typing-extensions = ">=4.16.0,<5.0.0"
 
 [[package]]
 name = "pysigma-backend-elasticsearch"
@@ -853,26 +853,26 @@ files = [
 
 [[package]]
 name = "types-pyyaml"
-version = "6.0.12.20260518"
+version = "6.0.12.20260724"
 description = "Typing stubs for PyYAML"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "types_pyyaml-6.0.12.20260518-py3-none-any.whl", hash = "sha256:d2150f75a231c9fe9c7463bd29487d93e60bac90400287351384bc2284eba7cd"},
-    {file = "types_pyyaml-6.0.12.20260518.tar.gz", hash = "sha256:d917f83fb38462550338c1297faedd860b3ec83912b96b1e3d73255f7473e466"},
+    {file = "types_pyyaml-6.0.12.20260724-py3-none-any.whl", hash = "sha256:d57db930a4b2efbc57cf430ec8882765d246929432fa253092f383902329a453"},
+    {file = "types_pyyaml-6.0.12.20260724.tar.gz", hash = "sha256:3c1ce1bb73cd5ec02e90390c2b1f00e810d241d8825fd73ff359696839271b6b"},
 ]
 
 [[package]]
 name = "typing-extensions"
-version = "4.15.0"
+version = "4.16.0"
 description = "Backported and Experimental Type Hints for Python 3.9+"
 optional = false
 python-versions = ">=3.9"
 groups = ["main", "dev"]
 files = [
-    {file = "typing_extensions-4.15.0-py3-none-any.whl", hash = "sha256:f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548"},
-    {file = "typing_extensions-4.15.0.tar.gz", hash = "sha256:0cea48d173cc12fa28ecabc3b837ea3cf6f38c6d1136f85cbaaf598984861466"},
+    {file = "typing_extensions-4.16.0-py3-none-any.whl", hash = "sha256:481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8"},
+    {file = "typing_extensions-4.16.0.tar.gz", hash = "sha256:dc983d19a509c94dba722ee6abd33940f7c05a89e243c47e907eb4db6f1a43e5"},
 ]
 markers = {dev = "python_version == \"3.10\""}
 
@@ -897,4 +897,4 @@ zstd = ["backports-zstd (>=1.0.0) ; python_version < \"3.14\""]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<4.0"
-content-hash = "1d29dfd1c66a5265918394570128b05801ded18c5368745e710827f46fd3b22e"
+content-hash = "6e7662dd6126c09ad43b2f62d6ed361478363c0704eaa7e125a907e4a3019e37"
