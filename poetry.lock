@@ -630,19 +630,18 @@ typing-extensions = ">=4.15.0,<5.0.0"
 
 [[package]]
 name = "pysigma-backend-elasticsearch"
-version = "2.1.0"
+version = "2.1.1"
 description = "pySigma Elasticsearch backend supporting Lucene, ES|QL (with correlations) and EQL queries"
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
 files = [
-    {file = "pysigma_backend_elasticsearch-2.1.0-py3-none-any.whl", hash = "sha256:d4b6ed1566fd8cca05a5d175d6d5dc644e0a863b94eab4025679c9550de1b881"},
-    {file = "pysigma_backend_elasticsearch-2.1.0.tar.gz", hash = "sha256:176a6bbc24b5b67aa597d03030370b9e4af9827d19767baf3c3b4bc27267a79e"},
+    {file = "pysigma_backend_elasticsearch-2.1.1-py3-none-any.whl", hash = "sha256:0bb514ae02445d2053d530bd732c8747ffac9184246d45f3fa2669d0862a5af4"},
+    {file = "pysigma_backend_elasticsearch-2.1.1.tar.gz", hash = "sha256:0cfb6b8e7892591c3bc83ef4dea4c4ef5cf8fe9e53e27dc3b0e9112bb3427fa6"},
 ]
 
 [package.dependencies]
-pysigma = ">=1.0.0,<2.0.0"
-pyyaml = ">=6.0.3"
+pysigma = ">=1.4.0,<2.0.0"
 
 [[package]]
 name = "pytest"
@@ -897,4 +896,4 @@ zstd = ["backports-zstd (>=1.0.0) ; python_version < \"3.14\""]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<4.0"
-content-hash = "1d29dfd1c66a5265918394570128b05801ded18c5368745e710827f46fd3b22e"
+content-hash = "b05f096ec9d0d8aaa7e1a8a5d506ac2dc73b8825e8b9c84291fae70de4f5bb0c"
