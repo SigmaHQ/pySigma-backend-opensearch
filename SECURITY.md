@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Security fixes go into the latest release line (currently `v2.0.3`) and the `main` branch. Older releases are not patched; please upgrade.
+Security fixes go into the latest release line and the `main` branch. Older releases are not patched; please upgrade.
 
 ## Reporting a vulnerability
 
